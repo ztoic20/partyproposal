@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ON Partylist Presentation</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", "Poppins", system-ui, sans-serif;
+}
+
+body {
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(255, 193, 7, 0.24), transparent 30%),
+        radial-gradient(circle at 88% 78%, rgba(0, 188, 212, 0.22), transparent 28%),
+        linear-gradient(135deg, #071421, #11324d 48%, #1f2933);
+}
+
+.slides {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    text-align: center;
+    padding: 22px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
+    pointer-events: none;
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.glass {
+    width: 75vw;
+    min-height: 75vh;
+    padding: 42px;
+    border-radius: 20px;
+    background: rgba(8, 21, 34, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-top: 7px solid #ffc107;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.36);
+    backdrop-filter: blur(18px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-24px);
+}
+
+.back-link {
+    position: fixed;
+    top: 22px;
+    left: 22px;
+    z-index: 250;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+}
+
+.title-image {
+    width: 60%;
+    max-height: 44vh;
+    object-fit: contain;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.34));
+}
+
+h1 {
+    font-size: 3.4rem;
+    line-height: 1.08;
+    font-weight: 800;
+    margin-bottom: 18px;
+}
+
+h2 {
+    font-size: 2.35rem;
+    line-height: 1.18;
+    margin-bottom: 18px;
+    color: #f7fbff;
+}
+
+p {
+    color: #eef6fb;
+    font-size: 1.35rem;
+    line-height: 1.65;
+    max-width: 780px;
+}
+
+.subtitle {
+    font-size: 1.65rem;
+    color: #d7edf6;
+}
+
+.content {
+    width: 100%;
+    max-height: 410px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.centered-content {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.centered-content p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+}
+
+.list {
+    display: grid;
+    gap: 13px;
+    text-align: left;
+}
+
+.list p {
+    max-width: none;
+    padding: 13px 16px;
+    border-left: 4px solid rgba(255, 193, 7, 0.9);
+    background: rgba(255, 255, 255, 0.075);
+    border-radius: 8px;
+}
+
+strong {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.divider {
+    height: 1px;
+    width: 100%;
+    max-width: 720px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 20px 0;
+}
+
+.slide-dots {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 200;
+    max-width: 92vw;
+    overflow-x: auto;
+    padding: 9px 15px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(10px);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dot.active-dot {
+    width: 28px;
+    background: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 780px) {
+    .glass {
+        width: 84vw;
+        min-height: 72vh;
+        padding: 30px 22px;
+        transform: translateY(-16px);
+    }
+
+    h1 {
+        font-size: 2.4rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    p,
+    .subtitle {
+        font-size: 1.08rem;
+    }
+
+    .title-image {
+        max-height: 34vh;
+        margin-bottom: 18px;
+    }
+
+    .content {
+        max-height: 380px;
+    }
+}
+
+@media (max-width: 520px) {
+    .slide {
+        padding: 16px;
+    }
+
+    .glass {
+        width: 90vw;
+        min-height: 70vh;
+        padding: 24px 16px;
+        transform: translateY(-10px);
+    }
+
+    h1 {
+        font-size: 1.95rem;
+    }
+
+    h2 {
+        font-size: 1.45rem;
+    }
+
+    p,
+    .subtitle {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .title-image {
+        max-height: 30vh;
+    }
+
+    .list p {
+        padding: 10px 12px;
+    }
+}
+</style>
+</head>
+<body>
+<a class="back-link" href="index5.html">Back</a>
+
+<div class="slides">
+    <section class="slide">
+        <div class="glass">
+            <img class="title-image" src="img2.png" alt="ON Partylist logo">
+            <h1>ON Partylist</h1>
+            <p class="subtitle">Oriented Nexus Partylist</p>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="glass">
+            <p>ON Partylist is a student leadership group for the Computer Society of the BSIT Department focused on connection, service, transparency, and innovation. It aims to become the central link between students, officers, and the organization.</p>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="glass">
+            <div class="content centered-content">
+                <p><strong>Nexus</strong> means a central connection or link between people, ideas, and systems. For ON Partylist, it represents unity, communication, and shared leadership within the Computer Society.</p>
+                <div class="divider"></div>
+                <h2>Leadership Foundation</h2>
+                <p>ON Partylist is inspired by Quantum Leadership Theory by Danah Zohar, which emphasizes connection, relationships, adaptability, and the power of small actions to create meaningful change.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="glass">
+            <h2>Core Principles</h2>
+            <div class="content list">
+                <p><strong>Interconnectedness</strong> &ndash; Every student concern affects the whole community.</p>
+                <p><strong>Non-Linear Impact</strong> &ndash; Small initiatives can create big improvements.</p>
+                <p><strong>Relational Power</strong> &ndash; Strong leadership comes from strong connections.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="glass">
+            <div class="content centered-content">
+                <h2>Vision</h2>
+                <p>To create a connected, service-oriented, and innovative Computer Society where every BSIT student feels heard and valued.</p>
+                <div class="divider"></div>
+                <h2>Mission</h2>
+                <p>To strengthen student connections through quality service, proactive leadership, transparency, and innovative programs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="glass">
+            <h2>Advocacies</h2>
+            <div class="content list">
+                <p><strong>Quality Service</strong> &ndash; Organized and responsive student service.</p>
+                <p><strong>Proactive Leadership</strong> &ndash; Taking action before problems grow.</p>
+                <p><strong>Transparency</strong> &ndash; Keeping students informed and involved.</p>
+                <p><strong>Innovation</strong> &ndash; Creating modern and practical solutions.</p>
+                <p><strong>Student Connection</strong> &ndash; Building unity among BSIT students.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="glass">
+            <h2>Possible Campaign Slogans</h2>
+            <div class="content list">
+                <p>&ldquo;ON sa Quality Service.&rdquo;</p>
+                <p>&ldquo;ON sa Proactive and Passionate Leadership.&rdquo;</p>
+                <p>&ldquo;ON sa Transparency.&rdquo;</p>
+                <p>&ldquo;ON sa Innovation.&rdquo;</p>
+                <p>&ldquo;Basta ON, Mapag-ON!&rdquo;</p>
+                <p>&ldquo;Switch ON Leadership. Switch ON Innovation. Switch ON Service.&rdquo;</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="slide-dots" id="slideDots"></div>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll(".slide");
+const totalSlides = slides.length;
+const dotsContainer = document.getElementById("slideDots");
+
+function createDots() {
+    dotsContainer.innerHTML = "";
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        dot.addEventListener("click", () => goToSlide(i));
+        dotsContainer.appendChild(dot);
+    }
+}
+
+function updateDots() {
+    document.querySelectorAll(".dot").forEach((dot, index) => {
+        dot.classList.toggle("active-dot", index === currentSlide);
+    });
+}
+
+function goToSlide(index) {
+    const nextIndex = Math.max(0, Math.min(index, totalSlides - 1));
+    if (nextIndex === currentSlide) return;
+    slides[currentSlide].classList.remove("active");
+    currentSlide = nextIndex;
+    slides[currentSlide].classList.add("active");
+    updateDots();
+}
+
+function nextSlide() {
+    goToSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+    goToSlide(currentSlide - 1);
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight" || event.key === " " || event.key === "Spacebar") {
+        event.preventDefault();
+        nextSlide();
+    }
+
+    if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prevSlide();
+    }
+});
+
+let wheelTimer = null;
+window.addEventListener("wheel", (event) => {
+    if (wheelTimer) return;
+    event.deltaY > 0 ? nextSlide() : prevSlide();
+    wheelTimer = setTimeout(() => {
+        wheelTimer = null;
+    }, 260);
+}, { passive: true });
+
+let touchStartX = 0;
+document.addEventListener("touchstart", (event) => {
+    touchStartX = event.changedTouches[0].screenX;
+}, { passive: true });
+
+document.addEventListener("touchend", (event) => {
+    const touchEndX = event.changedTouches[0].screenX;
+    const threshold = 50;
+    if (touchEndX < touchStartX - threshold) nextSlide();
+    if (touchEndX > touchStartX + threshold) prevSlide();
+}, { passive: true });
+
+function initializeSlides() {
+    slides.forEach((slide, index) => {
+        slide.classList.toggle("active", index === 0);
+    });
+    createDots();
+    updateDots();
+}
+
+initializeSlides();
+</script>
+</body>
+</html>
